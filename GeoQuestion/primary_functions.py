@@ -22,9 +22,82 @@ def order_dots_by_OutAngleRule(dots,*connected_array):
         result = (dots,)
         for connected in connected_array:
             result = result+(connected,)
-        print("TPLE",result)
         return result
     else: return dots
+
+def getClosestDot(main_dot,dots,return_type,not_that = None):
+    distance = lambda dot1,dot2 : math.sqrt((dot1.coord.x-dot2.coord.x)**2 + (dot1.coord.y-dot2.coord.y)**2)
+    dots.remove(main_dot)
+
+    if not_that != None :
+        if type(not_that) == int: dots.pop(not_that)
+        else : dots.remove(not_that)
+    closest_distance, closest_dot = distance(main_dot,[dots[0]]), 0
+    
+    for i in range(0,len(dots)):
+        new_distance = distance(main_dot,dots[i])
+        if new_distance < closest_distance: 
+            closest_distance = new_distance
+            closest_dot = i
+    
+    if type(return_type)  == int: return closest_dot
+    else: return dots[closest_dot]
+        
+        
+    
+
+def order_dots_polygonStyle_by_distance(dots,*connected_arrays):
+    cId = getClosestDot(dots[0],dots,int)
+    ordered_dots = [dots[0],dots[cId]]
+    ordered_connecteds = [[connected_array[0],connected_array[cId]] for connected_array in connected_arrays]
+
+    while len(ordered_dots) != dots:
+        cId = getClosestDot(ordered_dots[len(ordered_dots)-1],dots,not_that=len(ordered_dots)-2)
+        ordered_dots.append(dots[cId])
+        for i in range(0,len(ordered_connecteds)):
+            ordered_connecteds[i].append(connected_arrays[i][cId])
+    
+    return (dots,)+tuple(connected_arrays)
+
+
+def order_dots_polygonStyle_by_intersecteds(dots,lines_of_intersecteds,*connected_arrays):
+    def find_another_dot(present_dot,intersected_line):
+        for i in range(0,len(lines_of_intersecteds)):
+            if intersected_line in lines_of_intersecteds[i] and i != present_dot:
+                return i, lines_of_intersecteds[i][int(not bool(lines_of_intersecteds[i].index(intersected_line)))]
+        return (-1,-1)
+
+    ordered_dots = []
+    ordered_connecteds = [[] for connected_array in connected_arrays]
+
+    next_counter, intersected_line = find_another_dot(-1,lines_of_intersecteds[0][0])
+
+    while len(ordered_dots) != len(dots):
+        ordered_dots.append(dots[next_counter])
+        for i in range(0,len(ordered_connecteds)): ordered_connecteds[i].append(connected_arrays[i][next_counter])
+        next_counter,intersected_line = find_another_dot(next_counter,intersected_line)
+    
+    return (ordered_dots,)+tuple(connected_arrays)
+
+def order_dots_polygonStyle_by_intersecteds_andReceiveOnlyIds(dots,lines_of_intersecteds):
+    def find_another_dot(present_dot,intersected_line):
+        for i in range(0,len(lines_of_intersecteds)):
+            if intersected_line in lines_of_intersecteds[i] and i != present_dot:
+                return i, lines_of_intersecteds[i][int(not bool(lines_of_intersecteds[i].index(intersected_line)))]
+        return (-1,-1)
+
+    ordered_ids = []
+
+    next_counter, intersected_line = find_another_dot(-1,lines_of_intersecteds[0][0])
+
+    while len(ordered_ids) != len(dots):
+        ordered_ids.append(next_counter)
+        next_counter,intersected_line = find_another_dot(next_counter,intersected_line)
+    
+    return ordered_ids
+
+
+
 
 def select_from_(array, condition, *connected_array): # if condition returns true, I will add the element!
     new_array = []

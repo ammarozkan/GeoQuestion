@@ -1,8 +1,9 @@
 import math
-from .primary_functions import easyatan,order_dots_by_OutAngleRule,select_from_
+from .primary_functions import easyatan,order_dots_by_OutAngleRule,select_from_,order_dots_polygonStyle_by_intersecteds_andReceiveOnlyIds
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
+from random import random,randint
 
 class Coordinate:
     def __init__(self,coordinates):
@@ -125,33 +126,76 @@ class Function:
     def rotate_line(line,angle_in_rad : float, center_point = Coordinate((0,0))):
         a1,a2 = line.fcoord(0).rotate(angle_in_rad,center_point),line.fcoord(1).rotate(angle_in_rad,center_point)
         return Function.dotsToLine(a1,a2)
+    
+    @staticmethod
+    def random_line_byAngle(name = "randomline"+str(randint(0,99999999999)),slope_range = (0,math.pi),c_range = (-10,10)):
+        angle = (slope_range[1]-slope_range[0]) * random() + slope_range[0]
+        constant = (c_range[1]-c_range[0]) * random() + c_range[0]
+        return Function([constant,easyatan(angle)],name)
+    
+    @staticmethod
+    def random_line_withC_byAngle(name = "randomline"+str(randint(0,99999999999)),slope_range = (0,math.pi),c = 0):
+        angle = (slope_range[1]-slope_range[0]) * random() + slope_range[0]
+        return Function([c,easyatan(angle)],name)
+    
+    @staticmethod
+    def random_line_parallelto_(another_line,name = "randomline"+str(randint(0,99999999999)),c_range = (-10,10)):
+        constant = (c_range[1]-c_range[0]) * random() + c_range[0]
+        return Function([constant,another_line.const[1]],name)
+    
+    @staticmethod
+    def random_line_withC_parallelto_(another_line,name = "randomline"+str(randint(0,99999999999)),c = 0):
+        return Function([c,another_line.const[1]],name)
+        
 
 
 
 class Polygon:
+    
     def __init__(self, dots : list[Dot],lines_of_intersecteds,name): # if constants_of_intersecteds = [(Function([1,0]), Function([0,1]))] => dots[0] occurs from intersection of f(x) = 1 with f(x) = x
         self.dots,lines_of_intersecteds = order_dots_by_OutAngleRule(dots,lines_of_intersecteds)
         angles = [0 for c in range(0,len(self.dots))]
-        angle_vision = [Coordinate((0,0)) for c in range(0,len(self.dots))]
         for x in range(0,len(self.dots)):
             angles[x] = abs( easyatan(lines_of_intersecteds[x][0].const[1]) - easyatan(lines_of_intersecteds[x][1].const[1]) )
             if x != 0 and x != len(self.dots)-1: angles[x] = math.pi-angles[x]
 
-            bisector_line = self.bisector_by_lines(self.dots[x],lines_of_intersecteds[x],x)
-            dx = bisector_line.dx_by_vectorsize(1)
-            if (Dot.average_of_points(dots)).coord.x < self.dots[x].coord.x or (Dot.average_of_points(dots)).coord.y < self.dots[x].coord.y: dx = dx*-1
-            angle_vision[x] = Coordinate((dx,dx*bisector_line.const[1]))
+        self.angles,self.name = angles,name
         
-        self.angles = angles
+        self.polygonStyleOrdered_ids = order_dots_polygonStyle_by_intersecteds_andReceiveOnlyIds(self.dots,lines_of_intersecteds)
+        #print([id for id in self.polygonStyleOrdered_ids])
+
+        angle_vision = [Coordinate((0,0)) for c in range(0,len(self.dots))]
+        for x in range(0,len(self.dots)):
+            dot_id = self.polygonStyleOrdered_ids.index(x)
+            dot_id = np.array([dot_id-1,dot_id,dot_id+1])%len(self.dots)
+            b1 = self.bisector(dot_id[0],dot_id[1],dot_id[2])
+            dot_id = np.array([dot_id[1],dot_id[2],dot_id[0]])
+            b2 = self.bisector(dot_id[0],dot_id[1],dot_id[2])
+            incenter = Function.intersect(b1,b2)
+            
+            angle_vision[x] = (incenter-self.dots[x].coord)/3
         self.angle_vision = angle_vision
-        self.name = name
+    
+    def allIncenters(self):
+        incenter_dots = []
+        for x in range(0,len(self.dots)):
+            dot_id = self.polygonStyleOrdered_ids.index(x)
+            dot_id = np.array([dot_id-1,dot_id,dot_id+1])%len(self.dots)
+            b1 = self.bisector(dot_id[0],dot_id[1],dot_id[2])
+            dot_id = np.array([dot_id[1],dot_id[2],dot_id[0]])
+            b2 = self.bisector(dot_id[0],dot_id[1],dot_id[2])
+            incenter = Function.intersect(b1,b2)
+
+            incenter_dots.append(Dot(incenter,self.name+"'sPrivateIncenterOf"+self.dots[dot_id[0]].name+self.dots[dot_id[1]].name+self.dots[dot_id[2]].name))
+        return incenter_dots
     
     def bisector(self,dot1_id, angle_dot_id, dot2_id):
-        dot_id = self.dots.index(self.dots[angle_dot_id])
+        print(order_dots_by_OutAngleRule([self.dots[dot1_id],self.dots[angle_dot_id],self.dots[dot2_id]]))
+        dot_id = order_dots_by_OutAngleRule([self.dots[dot1_id],self.dots[angle_dot_id],self.dots[dot2_id]])[0].index(self.dots[angle_dot_id])
         angle_of_bisector = (easyatan((self.dots[dot1_id].coord-self.dots[angle_dot_id].coord).slope()) + easyatan((self.dots[dot2_id].coord-self.dots[angle_dot_id].coord).slope()))/2
         k1 = math.tan(angle_of_bisector)
 
-        if dot_id != 0 and dot_id != len(self.dots)-1: k1 = -1/k1
+        if dot_id != 0 and dot_id != 2: k1 = -1/k1
 
         k0 = self.dots[angle_dot_id].coord.y-k1*self.dots[angle_dot_id].coord.x
 
@@ -250,6 +294,9 @@ class Plane:
             elif type(new_object) == Angle: self.angles.append(new_object)
             elif type(new_object) == Polygon: self.polygons.append(new_object)
     
+    def create_parallel_line(self,name,another_line,c_range = (-10, 10)):
+        self.lines.append(Function.random_line_parallelto_(self.lines[self.find_object_by_name_(another_line,Function)],name,c_range))
+    
     def find_object_by_name_(self, name, object_type):
         if object_type == Function:
             for c in range(0,len(self.lines)):
@@ -271,7 +318,7 @@ class Plane:
         self.dots.append(Dot(coord,name))
         self.intersect_lines.append([line_id1,line_id2])
     
-    def define_polygon_(self, polygon_name, *dotnames):
+    def define_polygon_(self, polygon_name,it_is_triangle = False, *dotnames):
         intersected_lines = []
         dots = []
         for dotname in dotnames:
@@ -284,16 +331,22 @@ class Plane:
                 print("Intersected lines required.") ; return
             intersected_lines.append((self.lines[intersection[0]],self.lines[intersection[1]]))
             dots.append(self.dots[dot_id])
-        self.polygons.append(Polygon(dots,intersected_lines,polygon_name))
+        if it_is_triangle: self.polygons.append(Triangle(dots,intersected_lines,polygon_name))
+        else : self.polygons.append(Polygon(dots,intersected_lines,polygon_name))
+    
+    def clear(self):
+        self = self.__init__()
     
     def to_graph(self,graph_step = 0.1):
-        maxminRange = Plane.minimumRange(self.dots)
+        xr = np.arange(-10,10,graph_step)
+        if len(self.dots) > 0:
+            maxminRange = Plane.minimumRange(self.dots)
+            xr = np.arange(maxminRange.x.min-graph_step,maxminRange.x.max+graph_step,graph_step)
         
         fig,ax = plt.subplots()
-        xr = np.arange(maxminRange.x.min-graph_step,maxminRange.x.max+graph_step,graph_step)
         for line in self.lines : 
             ax.plot(xr,line.f_numpy(xr))
-            print(line.name)
+            #print(line.name)
         
         for dot in self.dots : 
             ax.annotate(dot.name,dot.coord.getArrayLike())
