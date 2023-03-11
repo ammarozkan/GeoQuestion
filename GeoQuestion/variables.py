@@ -266,7 +266,7 @@ class Triangle(Polygon):
         other_dots = [0,1,2]
         other_dots.remove(dot_id)
         k = (self.dots[other_dots[0]].coord-self.dots[other_dots[1]].coord).slope()
-        k = 1/k # for being prependicular
+        k = -1/k # for being prependicular
         c = self.dots[dot_id].coord.y-k*self.dots[dot_id].coord.x
 
         if name == None: name = self.name+"'sPrependicularOf"+self.dots[dot_id].name
