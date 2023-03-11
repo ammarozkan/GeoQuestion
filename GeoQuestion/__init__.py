@@ -29,6 +29,6 @@ def TestLibrary():
     '''
 
     testPart = GeometricLanguager("Testing")
-    testPart.read_file("objects.gml")
+    testPart.read_file("triangle.gml")
     
     

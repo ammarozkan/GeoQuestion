@@ -41,6 +41,10 @@ class Coordinate:
             sumofcoord = point+sumofcoord
         return sumofcoord/len(points)
 
+    @staticmethod
+    def distance_of_coords(c1,c2):
+        return math.sqrt((c2.x-c1.x)**2 + (c2.y-c1.y)**2)
+
 class Dot:
     def __init__(self,coordinate,name):
         if type(coordinate) == Coordinate:
@@ -75,6 +79,10 @@ class Dot:
         for point in points:
             sumofcoord = point+sumofcoord
         return sumofcoord/len(points)
+
+    @staticmethod
+    def distance_of_points(p1,p2):
+        return Coordinate.distance_of_coords(p1.coord, p2.coord)
     
 
 class Function:
@@ -103,13 +111,26 @@ class Function:
     
     def deriative(self):
         return self.__init__([self.const[i]*i for i in range(1,len(self.const))])
+
+    def __str__(self):
+        functext = ""
+        for c in range(0,len(self.const)):
+            i = len(self.const)-c-1
+            x_power = i
+            str_value = str(float(int(self.const[i]*100))/100)
+            functext += ("+" if self.const[i] > 0 and c != 0 else "")+(str_value+"x^"+str(i) if i > 1 else str_value+"x" if i > 0 else str_value)
+        return self.name+":"+functext
     
     @staticmethod
-    def dotsToLine(coord1 : Coordinate,coord2 : Coordinate):
+    def coordsToLine(coord1 : Coordinate,coord2 : Coordinate,name):
         basic_line = coord2-coord1
         k = basic_line.y/basic_line.x
         c = coord1.y-k*coord1.x
-        return Function([c,k])
+        return Function([c,k],name)
+
+    @staticmethod
+    def dotsToLine(dot1 : Dot,dot2 : Dot, name):
+        return Function.coordsToLine(dot1.coord,dot2.coord,name)
     
     @staticmethod
     def dotAndSlope(dot : Dot,slope):
@@ -152,7 +173,8 @@ class Function:
 
 class Polygon:
     
-    def __init__(self, dots : list[Dot],lines_of_intersecteds,name): # if constants_of_intersecteds = [(Function([1,0]), Function([0,1]))] => dots[0] occurs from intersection of f(x) = 1 with f(x) = x
+    def __init__(self, dots : list[Dot],lines_of_intersecteds,name): 
+            # if constants_of_intersecteds = [(Function([1,0]), Function([0,1]))] => dots[0] occurs from intersection of f(x) = 1 with f(x) = x
         self.dots,lines_of_intersecteds = order_dots_by_OutAngleRule(dots,lines_of_intersecteds)
         angles = [0 for c in range(0,len(self.dots))]
         for x in range(0,len(self.dots)):
@@ -189,8 +211,7 @@ class Polygon:
             incenter_dots.append(Dot(incenter,self.name+"'sPrivateIncenterOf"+self.dots[dot_id[0]].name+self.dots[dot_id[1]].name+self.dots[dot_id[2]].name))
         return incenter_dots
     
-    def bisector(self,dot1_id, angle_dot_id, dot2_id):
-        print(order_dots_by_OutAngleRule([self.dots[dot1_id],self.dots[angle_dot_id],self.dots[dot2_id]]))
+    def bisector(self,dot1_id, angle_dot_id, dot2_id,name=None):
         dot_id = order_dots_by_OutAngleRule([self.dots[dot1_id],self.dots[angle_dot_id],self.dots[dot2_id]])[0].index(self.dots[angle_dot_id])
         angle_of_bisector = (easyatan((self.dots[dot1_id].coord-self.dots[angle_dot_id].coord).slope()) + easyatan((self.dots[dot2_id].coord-self.dots[angle_dot_id].coord).slope()))/2
         k1 = math.tan(angle_of_bisector)
@@ -199,7 +220,8 @@ class Polygon:
 
         k0 = self.dots[angle_dot_id].coord.y-k1*self.dots[angle_dot_id].coord.x
 
-        return Function([k0,k1],self.name+"'sBisectorOf "+self.dots[angle_dot_id].name)
+        if name == None:name = self.name+"'sBisectorOf "+self.dots[angle_dot_id].name
+        return Function([k0,k1],name)
 
     def bisector_by_lines(self, dot, lines_of_intersect, dot_id):
         angle_of_bisector = (easyatan(lines_of_intersect[0].const[1]) + easyatan(lines_of_intersect[1].const[1]))/2
@@ -214,6 +236,11 @@ class Polygon:
             if dot.name == dot_name: return dot
         return Dot((0,0),"NULL")
 
+    def getdotid(self,dot_name):
+        for c in range(0,len(self.dots)):
+            if self.dots[c].name == dot_name: return c
+        return -1
+
 
 
 class Triangle(Polygon):
@@ -227,18 +254,32 @@ class Triangle(Polygon):
         line1, line2 = Function.dotsToLine(self.dots[0],self.angle_vision[0]),Function.dotsToLine(self.dots[1],self.angle_vision[1])
         return Function.intersect(line1,line2)
     
-    def median_line(self,dot_id):
-        other_dots = [0,1,2].remove(dot_id)
+    def median_line(self,dot_id,name = None):
+        print(dot_id)
+        other_dots = [0,1,2]
+        other_dots.remove(dot_id)
         median_coord = (self.dots[other_dots[0]].coord+self.dots[other_dots[1]].coord)/2
-        return Function.dotsToLine(self.dots[dot_id],median_coord)
+        if name == None:name = self.name+"'sMedianOf"+self.dots[dot_id].name
+        return Function.coordsToLine(self.dots[dot_id].coord,median_coord,name)
     
-    def prependicular_line(self,dot_id):
-        other_dots = [0,1,2].remove(dot_id)
-        k = (self.dots[other_dots[0]].coord-self.dots[other_dots[1]].coord).slope
+    def prependicular_line(self,dot_id,name=None):
+        other_dots = [0,1,2]
+        other_dots.remove(dot_id)
+        k = (self.dots[other_dots[0]].coord-self.dots[other_dots[1]].coord).slope()
         k = 1/k # for being prependicular
         c = self.dots[dot_id].coord.y-k*self.dots[dot_id].coord.x
 
-        return Function([c,k])
+        if name == None: name = self.name+"'sPrependicularOf"+self.dots[dot_id].name
+        return Function([c,k],name)
+
+    def line_lengths(self,dot_id):
+        other_dots = [0,1,2]
+        other_dots.remove(dot_id)
+        return Dot.distance_of_points(self.dots[other_dots[0]],self.dots[other_dots[1]])
+        
+    
+    def area(self):
+        return self.line_lengths(0)*self.line_lengths(1)*math.sin(self.angles[2])*(1/2)
         
 class Angle:
     def bisector(self,dot1_id, angle_dot_id, dot2_id):
@@ -360,3 +401,9 @@ class Plane:
             ax.annotate( str(float('%.2f' % (angle.angle*180/math.pi))),(angle.dots[1].coord + angle.angle_vision).getArrayLike() )
         
         plt.show()
+
+    def __str__(self):
+        dot_string = "Dots:"+str([str(dot) for dot in self.dots])
+        line_string = "Lines:"+str([str(line) for line in self.lines])
+        polygon_string = "Polygons"+str([str(polygon) for polygon in self.polygons])
+        return dot_string+"\n"+line_string+"\n"+polygon_string

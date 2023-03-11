@@ -1,11 +1,11 @@
 - [x/2] Kütüphanenin daha düzenli baştan yazılması.
 - [x] Daha sistematik ve düzenli bir üçgen sistemi.
 - [x] Döndürme sistemi
-
+- [x] Sadece 3 nokta ile açı belirtmek.
+- [ ] Hata deteksiyonu
 
 
 - [ ] Aynı yeri belirten açıları 2 kez yazmamak.
-- [x] Sadece 3 nokta ile açı belirtmek.
 - [ ] Açı ortay, kenar ortay gibi şeyleri "ABC A median A_Median_ABC" gibi bir komutla belirtmek.
     Kullanımları:
     line a
