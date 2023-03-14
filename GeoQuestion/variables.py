@@ -255,7 +255,6 @@ class Triangle(Polygon):
         return Function.intersect(line1,line2)
     
     def median_line(self,dot_id,name = None):
-        print(dot_id)
         other_dots = [0,1,2]
         other_dots.remove(dot_id)
         median_coord = (self.dots[other_dots[0]].coord+self.dots[other_dots[1]].coord)/2
@@ -365,9 +364,9 @@ class Plane:
         for dotname in dotnames:
             dot_id = self.find_object_by_name_(dotname, Dot)
             if dot_id == None: 
-                print("Dot not found.") ; return
+                print("Dot named '",dotname,"' not found.") ; return
             intersection = self.intersect_lines[dot_id]
-            print(intersection)
+            #print(intersection)
             if intersection == None:
                 print("Intersected lines required.") ; return
             intersected_lines.append((self.lines[intersection[0]],self.lines[intersection[1]]))

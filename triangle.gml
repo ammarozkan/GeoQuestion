@@ -1,3 +1,4 @@
+next is clear
 line -> name:d1
 line -> name:d2
 line -> name:d3
@@ -11,5 +12,4 @@ line -> name:b1 -> t1's bisector A
 variable -> name:areaoft1 -> t1's area
 variable -> name:lengthofc -> lengthof A C
 next is graphing
-next is log
 end
