@@ -9,8 +9,12 @@ class Coordinate:
     def __init__(self,coordinates):
         self.x,self.y = coordinates
     def __add__(self,U):
+        if type(U) == tuple:
+            return Coordinate((self.x+U[0],self.y+U[1]))
         return Coordinate((self.x+U.x,self.y+U.y))
     def __sub__(self,U):
+        if type(U) == tuple:
+            return Coordinate((self.x-U[0],self.y-U[1]))
         return Coordinate((self.x-U.x,self.y-U.y))
     def __mul__(self, other : float):
         return Coordinate((self.x*other,self.y*other))
@@ -24,6 +28,10 @@ class Coordinate:
         return self.y/self.x
     def getArrayLike(self):
         return [self.x,self.y]
+    def getTupleLike(self):
+        return (self.x,self.y)
+    def length(self):
+        return math.sqrt(self.x**2 + self.y**2)
     
     def rotate(self,angle_in_rad : float,center_point=None):
         if center_point == None: center_point = Coordinate((0,0))
@@ -108,9 +116,6 @@ class Function:
     def dx_by_vectorsize(self,size):
         if len(self.const) == 2: 
             return math.sqrt((size**2)/(self.const[1]**2+1))
-    
-    def deriative(self):
-        return self.__init__([self.const[i]*i for i in range(1,len(self.const))])
 
     def __str__(self):
         functext = ""
@@ -127,6 +132,10 @@ class Function:
         k = basic_line.y/basic_line.x
         c = coord1.y-k*coord1.x
         return Function([c,k],name)
+
+    @staticmethod
+    def deriative(function):
+        return Function([function.const[i]*i for i in range(1,len(function.const))],function.name+"'")
 
     @staticmethod
     def dotsToLine(dot1 : Dot,dot2 : Dot, name):
@@ -196,6 +205,9 @@ class Polygon:
             incenter = Function.intersect(b1,b2)
             
             angle_vision[x] = (incenter-self.dots[x].coord)/3
+            #angle_vision[x] = angle_vision[x]/(angle_vision[x].length())
+            #direction = -1 if incenter.x < self.dots[x].coord.x else 1
+            #angle_vision[x] = Coordinate((b1.dx_by_vectorsize(1),Function.deriative(b1).f(b1.dx_by_vectorsize(1))))*direction
         self.angle_vision = angle_vision
     
     def allIncenters(self):

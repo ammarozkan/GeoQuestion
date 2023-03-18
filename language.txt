@@ -1,0 +1,10 @@
+line a
+line b
+line c
+a cut b C
+b cut c A
+a cut c B
+compose
+A,B,C triangle ABC
+line d bisector ABC
+figure;
