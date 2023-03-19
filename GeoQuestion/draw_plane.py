@@ -2,10 +2,11 @@ from PIL import Image, ImageDraw, ImageFont
 from .variables import Plane
 from math import sqrt,pi
 
-def Draw(w,h,plane,dotSize = 5,fontSize = 32,realisticSize = False):
+def Draw(w,h,plane,dotSize = 5,fontSize = 16,realisticSize = False,onesizeAnglePos=True,title="EnormousShapes",font_name="Hack-Regular.ttf",anglei_distance=None):
+    if anglei_distance == None: anglei_distance = sqrt(w**2+h**2)/50
     img = Image.new("RGB", (w, h))
     drawer = ImageDraw.Draw(img)
-    font = ImageFont.truetype("Hack-Regular.ttf",fontSize)
+    font = ImageFont.truetype(font_name,fontSize)
     dotRange = Plane.minimumRange(plane.dots)
     if realisticSize:
         rangeShould = max(dotRange.x.max - dotRange.x.min, dotRange.y.max - dotRange.y.min)
@@ -41,13 +42,25 @@ def Draw(w,h,plane,dotSize = 5,fontSize = 32,realisticSize = False):
 
     for polygon in plane.polygons:
         for i in range(0,len(polygon.dots)):
-            x = xi(polygon.dots[i].coord.x + polygon.angle_vision[i].x)
-            y = yi(polygon.dots[i].coord.y + polygon.angle_vision[i].y)
-            slope = polygon.angle_vision[i].y/polygon.angle_vision[i].x
+            x,y = None,None
+            if onesizeAnglePos:
+                avy = polygon.angle_vision[i].y*(xrange/yrange)
+                avx = polygon.angle_vision[i].x
+                avx, avy = avx/sqrt(avx**2+avy**2),avy/sqrt(avx**2+avy**2)
+                x = xi(polygon.dots[i].coord.x) + anglei_distance*avx
+                y = yi(polygon.dots[i].coord.y) + anglei_distance*avy
+            else:
+                x = xi(polygon.dots[i].coord.x + polygon.angle_vision[i].x)
+                y = yi(polygon.dots[i].coord.y + polygon.angle_vision[i].y)
+
+            slope = abs(polygon.angle_vision[i].y/polygon.angle_vision[i].x)
             anglestring = "{:.2f}".format(polygon.angles[i]*180/pi)
             print(len(anglestring))
-            x -= (slope/(slope+1))*(fontSize*12/16)*len(anglestring)/2
+            x -= (fontSize*12/16)*len(anglestring)/2
+            y -= (fontSize*12/16)/2
             drawer.text((x,y), anglestring, fill=(255,255,255),font=font)
+
+    drawer.text((10,10),title,fill=(255,255,255),font=font)
 
 
     return img
