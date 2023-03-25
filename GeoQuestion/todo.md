@@ -1,4 +1,4 @@
-- [x/2] Kütüphanenin daha düzenli baştan yazılması.
+- [x] Kütüphanenin daha düzenli baştan yazılması.
 - [x] Daha sistematik ve düzenli bir üçgen sistemi.
 - [x] Döndürme sistemi
 - [x] Sadece 3 nokta ile açı belirtmek.
@@ -31,6 +31,10 @@
     m1 cut a E
 
     Bu sayede kenarortayın, başka bir kenarda kestiği nokta belirlenebilir.
+
+- [ ] README for geometric language explanation.
+
+- [ ] Convert draw functions to class to handle that visual variables, parameters easily.
 
 - [ ] Görüntü için alan tarama.
 
