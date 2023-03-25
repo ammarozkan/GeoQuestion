@@ -5,7 +5,7 @@ import random as rnd
 
 from .variables import Coordinate, Triangle,order_dots_by_OutAngleRule,Dot,Polygon,Function,Plane
 from .language_center import GeometricLanguager
-from .draw_plane import Draw
+from .draw_plane import Draw,DrawWithVariables
 
 def TestLibrary():
     

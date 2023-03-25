@@ -253,6 +253,12 @@ class Polygon:
             if self.dots[c].name == dot_name: return c
         return -1
 
+    def polygon_name(self):
+        name = ""
+        for andot in self.polygonStyleOrdered_ids:
+            name+=self.dots[andot].name
+        return name
+
 
 
 class Triangle(Polygon):

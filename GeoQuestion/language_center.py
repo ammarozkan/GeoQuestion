@@ -1,6 +1,19 @@
 from .variables import *
 import random
 
+class Variable:
+    def __init__(self,name,value,specifies_dict=dict(),visibility=True):
+        self.name, self.value, self.specifies_dict, self.visibility = name, value, specifies_dict,visibility
+
+    def __getitem__(self, key):
+        if key == "value": return self.value
+        elif key == "name": return self.name
+        elif key == "visibility": return self.visibility
+        elif key in self.specifies_dict: return self.specifies_dict[key]
+
+    def __str__(self):
+        return self.name + ":" + str(self.specifies_dict) + "=" + str(self.value) + " that " + ("visible" if self.visibility else "not visible")
+
 class Finder:
     def __init__(self):
         self.founded_id = -1
@@ -28,7 +41,7 @@ class GeometricLanguager:
         self.rereads = dict()
 
         self.finder = Finder()
-        self.variables = dict()
+        self.variables = {"^visible_count":0}
 
         self.error_log_printing = error_log_printing
         self.info_log_printing = info_log_printing
@@ -76,6 +89,8 @@ class GeometricLanguager:
                 var_data = self.to_dict(line[1].replace(" ",""))
                 #print(line)
                 #print(var_data)
+                if "name" in var_data and var_data["name"] == "^visible_count":
+                    print("You need to define a name to your thing that is not '^visible_count'")
                 if line[0].replace(" ","") == "line":
                     if "name" not in var_data:
                         self.error_log("If you defining a line, you should define with a name in it!")
@@ -147,10 +162,13 @@ class GeometricLanguager:
                         self.plane.define_polygon_(var_data["name"],False,*var_data["dots"])
                 elif line[0].replace(" ","") == "variable":
                     lyritic = self.convert_lyritic(line[2])
+                    visibility = False if "visible" not in var_data or var_data["visible"]!="yes" else True
+                    if visibility: self.variables["^visible_count"]+=1
                     if lyritic["belong_to"]:
                         if lyritic["priv_value"] and lyritic["priv_value"] == "area":
                             if self.finder.find_by_name_plane(self.plane,lyritic["belong_to"],Polygon):
-                                self.variables[var_data["name"]] = self.plane.polygons[self.finder.founded_id].area()
+                                specifies_dict = {"type":"area","objectname":self.plane.polygons[self.finder.founded_id].polygon_name()}
+                                self.variables[var_data["name"]] = Variable(var_data["name"],self.plane.polygons[self.finder.founded_id].area(),specifies_dict,visibility)
                     elif lyritic["commands"]:
                         if lyritic["commands"][0] == "lengthof":
                             d_ids = [-1,-1]
@@ -158,7 +176,8 @@ class GeometricLanguager:
                                 if self.finder.find_by_name_plane(self.plane,lyritic["commands"][i+1],Dot):
                                     d_ids[i] = self.finder.founded_id
                             if -1 not in d_ids:
-                                self.variables[var_data["name"]] = Dot.distance_of_points(self.plane.dots[d_ids[0]],self.plane.dots[d_ids[1]])
+                                specifies_dict = {"type":"distance","objectname":self.plane.dots[d_ids[0]].name+self.plane.dots[d_ids[1]].name}
+                                self.variables[var_data["name"]] = Variable(var_data["name"],Dot.distance_of_points(self.plane.dots[d_ids[0]],self.plane.dots[d_ids[1]]),specifies_dict,visibility)
                         else: self.error_log("We dont know such a command:",lyritic["commands"][0])
 
 

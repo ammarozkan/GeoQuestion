@@ -8,5 +8,8 @@ triangle -> name:t1, dots:A;B;C
 line -> name:Abisectort1 -> t1's bisector A
 line -> name:Bbisectort1 -> t1's bisector B
 line -> name:Cbisectort1 -> t1's bisector C
+variable -> name:areaoft1,visible:yes -> t1's area
+variable -> name:distanceofAB,visible:yes -> lengthof A B
+variable -> name:distanceofAC,visible:yes -> lengthof A C
 next is log
 end
