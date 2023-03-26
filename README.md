@@ -122,9 +122,9 @@ Look quickly:
 triangle -> name:t1, dots:A;B;C
 line -> name:patatoline -> t1's bisector A
 ```
-That code defines a line that is a bisector of ``` t1 ``` from dot A named ``` patatoline ```
+That code defines a line that is a bisector of ``` t1 ``` from dot ``` A ``` named ``` patatoline ```
 Super properties not like properties. You can use super properties like you are just building a sentence. (Not exact that, but similar.)
-Just add an extra '->' and write your super property.
+Just add an extra '->' to the line and write your super property.
 
 ##### "Uses of Super Properties" Table
 | Property       | Used At  | Explanation                                                             | Use                                          |
@@ -133,7 +133,71 @@ Just add an extra '->' and write your super property.
 | Area           | Variable | Area of an Triangle. (Just Triangle for now)                            | [Object(Triangle)]'s area                    |
 | Length         | Variable | Length between dots.                                                    | lengthof [Object(Dot)] [Object(Dot)]         |
 
-For a good variable, you should use super properties. Because, super properties is only way of getting information.
+Super Properties is only way of getting and using information. (You can see, they are being uniquely suited to variables.)
+
+> For a good variable, you should use super properties. Because, super properties is only way of getting and using information.
+
+#### "Next" Commands
+"Next" commands is here for logging, graphing, cleaning, rereading and reading another file with not touching any python code.
+
+Let's see all of em!
+
+* next
+  * is
+    * graphing             = Shows a graph of your geometric thing with matplotlib.
+    * log                  = Logs all of your content to terminal. Included variables that visible.
+    * clear                = Removes all objects. Or you can say it doin' like "cleaning the screen"
+    * reread               = This is most complicated command in that language. I'll tell more about that at down.
+  * to [File Name]         = Reads the file named [File Name]
+
+Example use:
+```
+next is clear
+next is log
+next to secondfile.gml
+```
+
+##### About reread command
+```
+next is reread [Target File] n
+```
+If reader sees ``` reread ``` command at a code, reader stops reading that file. And reads the target file ``` n ``` times. 
+And continues to read the first file.
+
+I hope I add a command for printing the graph to a image file. That thing exists in the GeoQuestion library, but not in the geometric language.
+
+### After Reading
+
+Let's return to python code. Let's say we have that command for file reading.
+
+```python
+import GeoQuestion![tmpkaw0bu76](https://user-images.githubusercontent.com/61326832/227795252-e6f4bce4-807f-4930-ba39-cd1740c321c9.PNG)
+
+languageReader = GeoQuestion.GeometricLanguager("Basic_Application",True,True)
+languageReader.read_file("thefile.gml")
+```
+After reading, we have plane object in ```languageReader```.  With that object, we can graph it, edit it or print it to an image.
+For graphing:
+```python
+languageReader.plane.to_graph()
+```
+
+For printing to a file, an imager should be defined:
+```python
+imager = GeoQuestion.GeometricImager()
+```
+
+This imager will print our plane object to a image file. For that:
+```python
+img = imager.Draw(languageReader.plane)
+```
+
+We got our image. That image created with PILLOW library. So we can use ```python img.show()``` for seeing the image.
+```python
+img.show()
+```
+
+So we gained that picture:
 
 
 
