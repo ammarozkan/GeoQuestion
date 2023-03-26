@@ -197,10 +197,14 @@ We got our image. That image created with PILLOW library. So we can use ```pytho
 img.show()
 ```
 
-So we gained that picture:
+Or we can create a image with variables. That will look like an geometry question.
 
+```python
+img = imager.DrawWithVariables(languageReader.plane,langueageReader.variables)
+```
 
-
+An example of a image created with ```python imager.DrawWithVariables()```
+![ShapesImageExample](/exampleimages_variables/2023-03-26RealNonsizedEnormousShapes1.jpg)
 
 
 
