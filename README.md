@@ -171,7 +171,7 @@ I hope I add a command for printing the graph to a image file. That thing exists
 Let's return to python code. Let's say we have that command for file reading.
 
 ```python
-import GeoQuestion![tmpkaw0bu76](https://user-images.githubusercontent.com/61326832/227795252-e6f4bce4-807f-4930-ba39-cd1740c321c9.PNG)
+import GeoQuestion
 
 languageReader = GeoQuestion.GeometricLanguager("Basic_Application",True,True)
 languageReader.read_file("thefile.gml")
@@ -205,6 +205,56 @@ img = imager.DrawWithVariables(languageReader.plane,langueageReader.variables)
 
 An example of a image created with ```python imager.DrawWithVariables()```
 ![ShapesImageExample](/exampleimages_variables/2023-03-26RealNonsizedEnormousShapes1.jpg)
+
+### Printing to a Image File
+
+Hooooo! We can specify our styling modifications too. For that, we use imager.
+
+You can define your geometric imager with your modifications. Or you can set your modifications after defining your imager.
+
+An example for setting modifications while defining:
+```python
+imager = GeoQuestion.GeometricImager(fontSize=25,lineWidth=10,modifyToRealistic=True)
+```
+Same example but setting modifications after defining:
+```python
+imager = GeoQuestion.GeometricImager()
+imager.fontSize  = 25
+imager.lineWidth = 10
+imager.modifyToRealistic = True
+```
+All modifications you can make:
+
+| Modifications       | Changes What?                               | Values                                                             |
+| ------------------- |:-------------------------------------------:|:------------------------------------------------------------------:|
+| w                   | Width of Image                              | An integer value that can be a width of an image.                  |
+| h                   | Heigth of Image                             | An integer value that can be a heigth of an image.                 |
+| dotSize             | Dot's Visual Circle Size                    | Diameter of circle So can be a float value for a diameter.         |
+| fontSize            | Font Size of Texts in Image                 | Just a font size. So can be an integer that bigger than 0          |
+| lineWidth           | Thickness of Lines                          | A float value. I called it lineWidth because it works like width.  |
+| variableMargin      | Changes Margin in Variable Segment Like CSS | Takes a tuple that contains (xmargin, ymargin). It so cooooooollu  |
+
+
+
+An example that shows what you can do with that:
+
+```python
+import GeoQuestion
+
+languageReader = GeoQuestion.GeometricLanguager("Basic_Application",True,True)
+languageReader.read_file("thefile.gml")
+
+imager = GeoQuestion.GeometricImager(fontSize=25,lineWidth=10)
+img = imager.Draw(languageReader.plane)
+imager.lineWidth=25
+img_withbiggerlines = imager.Draw(languageReader.plane)
+```
+
+imager = GeoQuestion.GeometricImager()
+imager.fontSize  = 25
+imager.lineWidth = 10
+imager.modifyToRealistic = True
+```
 
 
 
