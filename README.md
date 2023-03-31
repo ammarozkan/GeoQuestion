@@ -250,12 +250,6 @@ imager.lineWidth=25
 img_withbiggerlines = imager.Draw(languageReader.plane)
 ```
 
-imager = GeoQuestion.GeometricImager()
-imager.fontSize  = 25
-imager.lineWidth = 10
-imager.modifyToRealistic = True
-```
-
 
 
 
