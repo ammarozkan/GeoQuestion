@@ -233,7 +233,7 @@ All modifications you can make:
 | fontSize            | Font Size of Texts in Image                 | Just a font size. So can be an integer that bigger than 0          |
 | lineWidth           | Thickness of Lines                          | A float value. I called it lineWidth because it works like width.  |
 | variableMargin      | Changes Margin in Variable Segment Like CSS | Takes a tuple that contains (xmargin, ymargin). It so cooooooollu  |
-
+> (they are more actually, I'll write rest of them later.)
 
 
 An example that shows what you can do with that:
