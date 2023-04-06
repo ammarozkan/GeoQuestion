@@ -81,7 +81,7 @@ class GeometricLanguager:
     def read_file(self,file_path):
         with open(file_path) as fp:
             Lines = fp.readlines()
-            print("Reading File:",file_path)
+            self.info_log("Reading File:",file_path)
         
         for line in Lines:
             if line[0:4] != "next" and line[0:3] != "end":
@@ -133,7 +133,10 @@ class GeometricLanguager:
                             k = self.plane.lines[self.plane.find_object_by_name_(var_data["parallel"],Function)].const[1]
                         if "c" in var_data:
                             c = float(var_data["c"])
+                        if "k" in var_data:
+                            k = float(var_data["k"])
                         self.plane.add_object(Function([c,k],var_data["name"]))
+                        self.info_log("Line Defined:",var_data["name"])
                     else: self.error_log("Wtf is that. You splitted ",len(line)," times your line with that '->' thing.")
                 elif line[0].replace(" ","") == "dot":
                     if "name" not in var_data:
@@ -145,7 +148,9 @@ class GeometricLanguager:
                         f2 = self.plane.find_object_by_name_(var_data["cut"][1],Function)
                         if      f1 == None: self.error_log("I don't know line '",var_data["cut"][0],"'. You know?")
                         elif    f2 == None: self.error_log("I don't know line '",var_data["cut"][1],"'. You know?")
-                        else: self.plane.intersect_and_set(f1,f2,var_data["name"])
+                        else:
+                            self.plane.intersect_and_set(f1,f2,var_data["name"])
+                            self.info_log("Dot Defined:",var_data["name"])
                 elif line[0].replace(" ","") == "triangle":
                     if "name" not in var_data:
                         self.error_log("If you are defining a triangle, you should define with a name in it!")

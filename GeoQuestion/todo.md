@@ -32,9 +32,11 @@
 
     Bu sayede kenarortayın, başka bir kenarda kestiği nokta belirlenebilir.
 
+- [ ] Noktalarin ismini hic cizgi olmayan bir yere yazma. Bu renk kontrolu ile saglanabilir.
+
 - [ ] README for geometric language explanation.
 
-- [ ] Convert draw functions to class to handle that visual variables, parameters easily.
+- [x] Convert draw functions to class to handle that visual variables, parameters easily.
 
 - [ ] Görüntü için alan tarama.
 
