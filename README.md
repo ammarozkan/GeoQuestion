@@ -18,7 +18,7 @@ languageReader = GeoQuestion.GeometricLanguager("Basic_Application")
 languageReader.read_file("thefile.gml")
 ```
 
-This basic code generates a reader named ```languageReader``` with project name ```Basic_Application``` . Then it reads file named ```thefile.gml```. 
+This basic code generates a reader named ```languageReader``` with project name ```Basic_Application``` . Then it reads file named ```thefile.gml```.
 After reading, you can easily see the progress.
 
 ```python
@@ -27,7 +27,7 @@ languageReader.plane.to_graph()
 
 ### Wait a minute, what is that .gml file?
 
-That file is an geometric language file. (Not an gamemaker language file!) 
+That file is an geometric language file. (Not an gamemaker language file!)
 
 In example:
 
@@ -56,7 +56,7 @@ If you did look at the example up of this sentence, you can see some similaritie
 ```
 [The Type of Thing That Defined] -> Properties
 ```
-Lets understand defining an object. 
+Lets understand defining an object.
 
 #### Defining a Variable
 
@@ -64,7 +64,7 @@ The system uses lines for calculations. So if you are trying to define a dot, yo
 And then, you can intersect those lines for creation of an dot. Or you can use 3 lines for 3 dots.
 Then, you can use those dots for creating a polygon. And thats it. But for defining a thing, you should know more about properties.
 
-Properties, is the key of setting things to what you want to. For use of properties, just use '->' after object's type. 
+Properties, is the key of setting things to what you want to. For use of properties, just use '->' after object's type.
 For setting a property to something, you just write property's name after '->' and type ':' for mention that "I'm setting my property now.".
 And then, write your setting. If you want to add another property, you can seperate your properties with comma. In example:
 
@@ -74,7 +74,7 @@ line -> name:patatoline,parallel:aline
 
 In that example, we defined a parallel line to "aline" named "patatoline". Thats easy isn't it?
 
-Do a quick look to that table: 
+Do a quick look to that table:
 
 | Type of Object | Properties        |
 | -------------- |:-----------------:|
@@ -108,7 +108,7 @@ General style of defining a variable:
 variable -> properties
 ```
 
-We should mention that, "What is our variable? What should the program put there?". 
+We should mention that, "What is our variable? What should the program put there?".
 So we add a second '->', I call it super properties, and then say what is should be setted as variable to program.
 For using and understanding super properties, you should read the section next to this section.
 Because, super properties has a lot application areas. When you understood super properties, you can create a variable on your own.
@@ -161,7 +161,7 @@ next to secondfile.gml
 ```
 next is reread [Target File] n
 ```
-If reader sees ``` reread ``` command at a code, reader stops reading that file. And reads the target file ``` n ``` times. 
+If reader sees ``` reread ``` command at a code, reader stops reading that file. And reads the target file ``` n ``` times.
 And continues to read the first file.
 
 I hope I add a command for printing the graph to a image file. That thing exists in the GeoQuestion library, but not in the geometric language.
