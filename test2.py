@@ -1,3 +1,0 @@
-import GeoQuestion
-
-GeoQuestion.TestLibrary()
