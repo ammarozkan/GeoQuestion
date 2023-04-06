@@ -78,12 +78,15 @@ class GeometricLanguager:
         if self.info_log_printing: print("Info:",*l)
 
     
-    def read_file(self,file_path):
-        with open(file_path) as fp:
-            Lines = fp.readlines()
-            self.info_log("Reading File:",file_path)
+    def read_file(self,file_path = None,linesarray = None):
+        if linesarray == None and file_path != None:
+            with open(file_path) as fp:
+                linesarray = fp.readlines()
+                self.info_log("Reading File:",file_path)
+        elif linesarray == None:
+            print("Hey, hey, hey. Somethings wrong... You cant just pass a empty parameter here!")
         
-        for line in Lines:
+        for line in linesarray:
             if line[0:4] != "next" and line[0:3] != "end":
                 line = line.replace("\n","").split("->")
                 var_data = self.to_dict(line[1].replace(" ",""))
@@ -217,6 +220,10 @@ class GeometricLanguager:
     
     def show_result(self):
         self.plane.to_graph()
+
+    def __getitem__(self,name):
+        for var in self.variables:
+            if var == name: return self.variables[var]
                             
         
         
