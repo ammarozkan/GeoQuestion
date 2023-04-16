@@ -1,5 +1,6 @@
 from .variables import *
 import random
+from math import pi
 
 class Variable:
     def __init__(self,name,value,specifies_dict=dict(),visibility=True):
@@ -33,7 +34,7 @@ class Finder:
 
 
 class GeometricLanguager:
-    def __init__(self, project_name, error_log_printing = True, info_log_printing = True):
+    def __init__(self, project_name, error_log_printing = True, info_log_printing = True,megainfo_log_printing = True):
         self.project_name = project_name
         self.plane = Plane()
         self.constant1 = (-10,10)
@@ -45,6 +46,7 @@ class GeometricLanguager:
 
         self.error_log_printing = error_log_printing
         self.info_log_printing = info_log_printing
+        self.megainfo_log_printing = megainfo_log_printing
     
     def to_dict(self,string : str):
         variables = string.split(",")
@@ -77,6 +79,9 @@ class GeometricLanguager:
     def info_log(self,*l):
         if self.info_log_printing: print("Info:",*l)
 
+    def megainfo_log(self,*l):
+        if self.megainfo_log_printing: print("MegaInfo:",*l)
+
     
     def read_file(self,file_path = None,linesarray = None):
         if linesarray == None and file_path != None:
@@ -87,6 +92,7 @@ class GeometricLanguager:
             print("Hey, hey, hey. Somethings wrong... You cant just pass a empty parameter here!")
         
         for line in linesarray:
+            self.megainfo_log("Reading Steilen:",line)
             if line[0:4] != "next" and line[0:3] != "end":
                 line = line.replace("\n","").split("->")
                 var_data = self.to_dict(line[1].replace(" ",""))
@@ -141,7 +147,8 @@ class GeometricLanguager:
                         self.plane.add_object(Function([c,k],var_data["name"]))
                         self.info_log("Line Defined:",var_data["name"])
                     else: self.error_log("Wtf is that. You splitted ",len(line)," times your line with that '->' thing.")
-                elif line[0].replace(" ","") == "dot":
+                elif line[0].replace(" ","") == "dot" or line[0].replace(" ","") == "secretdot":
+                    secretdot = line[0].replace(" ","") == "secretdot"
                     if "name" not in var_data:
                         self.error_log("If you are defining a dot, you should define with a name in it!")
                     elif "cut" not in var_data or len(var_data["cut"]) != 2 or type(var_data["cut"]) != list:
@@ -152,7 +159,7 @@ class GeometricLanguager:
                         if      f1 == None: self.error_log("I don't know line '",var_data["cut"][0],"'. You know?")
                         elif    f2 == None: self.error_log("I don't know line '",var_data["cut"][1],"'. You know?")
                         else:
-                            self.plane.intersect_and_set(f1,f2,var_data["name"])
+                            self.plane.intersect_and_set(f1,f2,var_data["name"],not secretdot)
                             self.info_log("Dot Defined:",var_data["name"])
                 elif line[0].replace(" ","") == "triangle":
                     if "name" not in var_data:
@@ -161,13 +168,29 @@ class GeometricLanguager:
                         self.error_log("If you are defining a triangle, you should define with 3 dots in it!")
                     else:
                         self.plane.define_polygon_(var_data["name"],True,*var_data["dots"])
+                elif line[0].replace(" ","") == "freetriangle":
+                    if "name" not in var_data:
+                        self.error_log("If you are defining a triangle, you should define with a name in it!")
+                    elif "dots" not in var_data or len(var_data["dots"]) != 3:
+                        self.error_log("If you are defining a triangle, you should define with 3 or more dots in it!")
+                    else:
+                        self.plane.define_freepolygon_(var_data["name"],True,*var_data["dots"])
+                        self.info_log("Defined a freepolygon named "+var_data["name"]+"!")
                 elif line[0].replace(" ","") == "polygon":
                     if "name" not in var_data:
                         self.error_log("If you are defining a polygon, you should define with a name in it!")
                     elif "dots" not in var_data or len(var_data["dots"]) < 3:
                         self.error_log("If you are defining a polygon, you should define with 3 or more dots in it!")
                     else:
-                        self.plane.define_polygon_(var_data["name"],False,*var_data["dots"])
+                        self.plane.define_polygon_(var_data["name"],len(var_data["dots"]) == 3,*var_data["dots"])
+                elif line[0].replace(" ","") == "freepolygon":
+                    if "name" not in var_data:
+                        self.error_log("If you are defining a polygon, you should define with a name in it!")
+                    elif "dots" not in var_data or len(var_data["dots"]) < 3:
+                        self.error_log("If you are defining a polygon, you should define with 3 or more dots in it!")
+                    else:
+                        self.plane.define_freepolygon_(var_data["name"],len(var_data["dots"]) == 3,*var_data["dots"])
+                        self.info_log("Defined a freepolygon named "+var_data["name"]+"!")
                 elif line[0].replace(" ","") == "variable":
                     lyritic = self.convert_lyritic(line[2])
                     visibility = False if "visible" not in var_data or var_data["visible"]!="yes" else True
@@ -177,6 +200,20 @@ class GeometricLanguager:
                             if self.finder.find_by_name_plane(self.plane,lyritic["belong_to"],Polygon):
                                 specifies_dict = {"type":"area","objectname":self.plane.polygons[self.finder.founded_id].polygon_name()}
                                 self.variables[var_data["name"]] = Variable(var_data["name"],self.plane.polygons[self.finder.founded_id].area(),specifies_dict,visibility)
+                        elif lyritic["priv_value"] and lyritic["priv_value"] == "angle":
+                                if self.finder.find_by_name_plane(self.plane,lyritic["belong_to"],Polygon):
+                                    object = self.plane.polygons[self.finder.founded_id]
+                                    d2dotid = object.getdotid(lyritic["priv_segment"])
+                                    if d2dotid == -1: self.error_log("There is not ",lyritic["priv_segment"]," named dot.")
+                                    anglevalue = self.plane.polygons[self.finder.founded_id].angles[d2dotid]*180/pi
+                                    allangles = [object.dots[object.polygonStyleOrdered_ids[(i+object.polygonStyleOrdered_ids.index(d2dotid)-1)%len(object.dots)]].name for i in range(0,3)]
+                                    print([object.dots[object.polygonStyleOrdered_ids[i]].name for i in range(0,len(object.dots))])
+                                    specifies_dict = {"type":"angle","objectname":allangles[0]+allangles[1]+allangles[2]}
+                                    self.variables[var_data["name"]] = Variable(var_data["name"],anglevalue,specifies_dict,visibility)
+                                    d2dotid = object.getdotid(lyritic["priv_segment"])
+                                    if d2dotid == -1: self.error_log("There is not ",lyritic["priv_segment"]," named dot.")
+                                    else:
+                                        object.angles[d2dotid]
                     elif lyritic["commands"]:
                         if lyritic["commands"][0] == "lengthof":
                             d_ids = [-1,-1]

@@ -80,10 +80,13 @@ def order_dots_polygonStyle_by_intersecteds(dots,lines_of_intersecteds,*connecte
     return (ordered_dots,)+tuple(connected_arrays)
 
 def order_dots_polygonStyle_by_intersecteds_andReceiveOnlyIds(dots,lines_of_intersecteds):
+    print([str(lines_of_intersecteds[i][0])+str(lines_of_intersecteds[i][1]) for i in range(0,len(lines_of_intersecteds))])
     def find_another_dot(present_dot,intersected_line):
         for i in range(0,len(lines_of_intersecteds)):
-            if intersected_line in lines_of_intersecteds[i] and i != present_dot:
-                return i, lines_of_intersecteds[i][int(not bool(lines_of_intersecteds[i].index(intersected_line)))]
+            zero = lines_of_intersecteds[i][0].name == intersected_line.name
+            one = lines_of_intersecteds[i][1].name == intersected_line.name
+            if (zero or one) and i != present_dot:
+                return i, lines_of_intersecteds[i][1 if zero else 0]
         return (-1,-1)
 
     ordered_ids = []
@@ -93,6 +96,7 @@ def order_dots_polygonStyle_by_intersecteds_andReceiveOnlyIds(dots,lines_of_inte
     while len(ordered_ids) != len(dots):
         ordered_ids.append(next_counter)
         next_counter,intersected_line = find_another_dot(next_counter,intersected_line)
+        print(next_counter)
     
     return ordered_ids
 

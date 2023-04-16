@@ -54,12 +54,13 @@ class Coordinate:
         return math.sqrt((c2.x-c1.x)**2 + (c2.y-c1.y)**2)
 
 class Dot:
-    def __init__(self,coordinate,name):
+    def __init__(self,coordinate,name,visibility=True):
         if type(coordinate) == Coordinate:
             self.coord = coordinate
         elif type(coordinate) == tuple:
             self.coord = Coordinate(coordinate)
         self.name = name
+        self.visibility = visibility
     
     def rotate(self,angle_in_rad : float, center_point = Coordinate((0,0))):
         return Dot((self.coord.rotate(angle_in_rad,center_point)),self.name+"'")
@@ -197,6 +198,7 @@ class Polygon:
 
         angle_vision = [Coordinate((0,0)) for c in range(0,len(self.dots))]
         for x in range(0,len(self.dots)):
+            print(self.polygonStyleOrdered_ids)
             dot_id = self.polygonStyleOrdered_ids.index(x)
             dot_id = np.array([dot_id-1,dot_id,dot_id+1])%len(self.dots)
             b1 = self.bisector(dot_id[0],dot_id[1],dot_id[2])
@@ -258,6 +260,7 @@ class Polygon:
         for andot in self.polygonStyleOrdered_ids:
             name+=self.dots[andot].name
         return name
+
 
 
 
@@ -326,6 +329,16 @@ class Angle:
         self.name = name
 
 
+# free things. damn
+def freePolygon(name,dots,it_is_triangle=False): # should get dots in polygon order
+    lines_of_intersecteds = []
+    for i in range(0,len(dots)):
+        f1 = Function.dotsToLine(dots[(i-1)%len(dots)],dots[(i)%len(dots)],dots[(i-1)%len(dots)].name+dots[(i)%len(dots)].name)
+        f2 = Function.dotsToLine(dots[(i)%len(dots)],dots[(i+1)%len(dots)],dots[(i)%len(dots)].name+dots[(i+1)%len(dots)].name)
+        lines_of_intersecteds.append((f1,f2))
+    if it_is_triangle: return Triangle(dots,lines_of_intersecteds,name)
+    else: return Polygon(dots,lines_of_intersecteds,name)
+
 
 class Plane:
     @staticmethod
@@ -368,12 +381,12 @@ class Plane:
         
         return None
     
-    def intersect_and_set(self,line_id1,line_id2,name):
+    def intersect_and_set(self,line_id1,line_id2,name,visibility=True):
         if type(line_id1) == str: line_id1 = self.find_object_by_name_(line_id1,Function)
         if type(line_id2) == str: line_id2 = self.find_object_by_name_(line_id2,Function)
 
         coord = Function.intersect(self.lines[line_id1],self.lines[line_id2])
-        self.dots.append(Dot(coord,name))
+        self.dots.append(Dot(coord,name,visibility))
         self.intersect_lines.append([line_id1,line_id2])
     
     def define_polygon_(self, polygon_name,it_is_triangle = False, *dotnames):
@@ -392,6 +405,15 @@ class Plane:
         if it_is_triangle: self.polygons.append(Triangle(dots,intersected_lines,polygon_name))
         else : self.polygons.append(Polygon(dots,intersected_lines,polygon_name))
     
+    def define_freepolygon_(self,polygon_name,it_is_triangle=False,*dotnames):
+        dots = []
+        for dotname in dotnames:
+            dot_id = self.find_object_by_name_(dotname, Dot)
+            if dot_id == None: 
+                print("Dot named '",dotname,"' not found.") ; return
+            dots.append(self.dots[dot_id])
+        self.polygons.append(freePolygon(polygon_name,dots,it_is_triangle=it_is_triangle))
+
     def clear(self):
         self = self.__init__()
     

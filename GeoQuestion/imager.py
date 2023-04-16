@@ -48,6 +48,7 @@ class GeometricImager:
             drawer.line([(0,yi(ymin)),(self.w,yi(ymax))], fill=self.line_color, width = self.lineWidth)
 
         for dot in plane.dots:
+            if dot.visibility == False:continue
             x,y = xi(dot.coord.x), yi(dot.coord.y)
             start = (x-self.dotSize,y-self.dotSize)
             stop = (x+self.dotSize,y+self.dotSize)
@@ -94,6 +95,7 @@ class GeometricImager:
 
         area_notation = lambda name, value : "A("+name+") = "+str(value)
         distance_notation = lambda name, value : "|"+name+"| = "+str(value)
+        angle_notation = lambda name, value : "m("+name+") = "+str(value)
 
         counter = 0
         for varname in variables:
@@ -102,6 +104,7 @@ class GeometricImager:
             notation = lambda name, value: str(name)+" = "+str(value)
             if varType == "distance":notation = distance_notation
             elif varType == "area": notation = area_notation
+            elif varType == "angle": notation = angle_notation
 
             value = variables[varname]["value"] if self.roundToDigits == -1 else round(variables[varname]["value"],self.roundToDigits)
             varstring = notation(variables[varname]["objectname"],value)
