@@ -88,7 +88,7 @@ Do a quick look to that table:
 
 You can see different types of objects has different types of properties. Not a lot, but a difference.
 
-#### Generally Variable Specialities:
+#### Generally Object Specialities:
 
 ##### line
 Just for defining a line, as a function or a equation. You say.
@@ -109,7 +109,56 @@ we have lines named d1 and d2. And we want to define a dot with intersecting the
 dot -> name:A,cut:d1;d2
 ```
 
-##### "Uses of Properties" Table
+##### polygon and triangle
+For polygon, we should have 3 dots at least. If we have 3 dots, we can just define a triangle. Defining polygon and triangle is same.
+Let's define a triangle named t1 and consisting of these A, B, C points
+
+```
+triangle -> name:t1,dots:A;B;C
+```
+
+And lets define polygon named p1 and consisting of these A, B, C, D, E points
+
+```
+polygon -> name:p1,dots:A;B;C;D;E
+```
+But I should mention that, defining a polygon from these dots is not easy. Because intersections from random lines not creates perfect
+polygon.
+
+##### freepolygon and freetriangle
+
+At defining a polygon with dots that intersects from lines, this library uses lines for connecting dots. But sometimes
+you maybe not have properly connected dots. In example:
+
+```
+"line -> name:d1",
+"line -> name:d2",
+"line -> name:d3",
+"dot -> name:A, cut:d1;d2",
+"dot -> name:B, cut:d2;d3",
+"dot -> name:C, cut:d1;d3",
+"triangle -> name:t1, dots:A;B;C",
+"line -> name:f1 -> t1's bisector A",
+"dot -> name:D, cut:f1;d3",
+```
+
+and then we want to define a triangle with A,C,D. But A is intersection between d1,d2 and D is intersection between f1,d3.
+This library will look at these and say: "you can't define a triangle with them. They are not connected. I can only calculate
+angles with connected lines." So for example like these , we can use freetriangle and freepolygon variables. These variables
+are same as triangle and polygon variables but they don't need a connection. They create their connection by just looking to
+dots.
+
+For that example, we can use that piece of code:
+
+```
+freetriangle -> name:ft1, dots:A;C;D
+```
+
+##### variable
+
+I'll tell more about them later.
+
+#### "Uses of Properties" Table
 | Property       | Explanation                                                             | Use                                    |
 | -------------- |:-----------------------------------------------------------------------:|:--------------------------------------:|
 | name           | Name of Object                                                          | name:nameofobject                      |
