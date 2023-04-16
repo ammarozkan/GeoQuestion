@@ -81,10 +81,33 @@ Do a quick look to that table:
 | line           | name,c,parallel   |
 | dot            | name,cut          |
 | polygon        | name,dots         |
+| freepolygon    | name,dots         |
 | triangle       | name,dots         |
+| freetriangle   | name,dots         |
 | variable       | name,visible      |
 
 You can see different types of objects has different types of properties. Not a lot, but a difference.
+
+#### Generally Variable Specialities:
+
+##### line
+Just for defining a line, as a function or a equation. You say.
+Generally a line creation happens randomly. But you can limit it. In example you can say it to be parallel to an another line. Or you can
+set it constant to 5. In example if we want to set our line d2 parallel to d1 and that d2 should be like f:kx + 5
+
+```
+line -> name:d1,parallel:d2,c:5
+```
+
+Thats it.
+
+##### dot
+For defining a dot, you should specify 2 lines min. Because for defining a dot, we need lines to intersect. In example
+we have lines named d1 and d2. And we want to define a dot with intersecting them. And name the dot with 'A' letter.
+
+```
+dot -> name:A,cut:d1;d2
+```
 
 ##### "Uses of Properties" Table
 | Property       | Explanation                                                             | Use                                    |
@@ -132,6 +155,7 @@ Just add an extra '->' to the line and write your super property.
 | Bisector       | Line     | Bisector of an Polygon from an Dot.                                     | [Object(Polygon)]'s bisector [Object(Dot)]   |
 | Area           | Variable | Area of an Triangle. (Just Triangle for now)                            | [Object(Triangle)]'s area                    |
 | Length         | Variable | Length between dots.                                                    | lengthof [Object(Dot)] [Object(Dot)]         |
+| Angle          | Variable | Angle at any dot in polygon.                                            | [Object(Polygon)]'s angle [Object(Dot)]      |
 
 Super Properties is only way of getting and using information. (You can see, they are being uniquely suited to variables.)
 
