@@ -15,6 +15,23 @@ class Variable:
     def __str__(self):
         return self.name + ":" + str(self.specifies_dict) + "=" + str(self.value) + " that " + ("visible" if self.visibility else "not visible")
 
+class VariableTextor:
+    def __init__(self,roundToDigits=3):
+        self.area_notation = lambda name, value : "A("+name+") = "+str(value)
+        self.distance_notation = lambda name, value : "|"+name+"| = "+str(value)
+        self.angle_notation = lambda name, value : "m("+name+") = "+str(value)
+        self.roundToDigits=roundToDigits
+
+    def textit(self,anvar):
+        print(anvar)
+        value = anvar["value"] if self.roundToDigits == -1 else round(anvar["value"],self.roundToDigits)
+        notation = lambda name, value: str(name)+" = "+str(value)
+        if anvar["type"] == "distance":notation = self.distance_notation
+        elif anvar["type"] == "area": notation = self.area_notation
+        elif anvar["type"] == "angle": notation = self.angle_notation
+
+        return notation(anvar["objectname"],value)
+
 class Finder:
     def __init__(self):
         self.founded_id = -1

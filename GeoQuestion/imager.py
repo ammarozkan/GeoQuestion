@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw, ImageFont
 from .variables import Plane
 from math import sqrt,pi
+from .language_center import VariableTextor
 
 DEF_LINECOLOR = (255,0,0)
 DEF_DOTCOLOR = DEF_LINECOLOR
@@ -93,21 +94,12 @@ class GeometricImager:
         drawer = ImageDraw.Draw(variable_image)
         font = ImageFont.truetype(self.font_name,self.fontSize)
 
-        area_notation = lambda name, value : "A("+name+") = "+str(value)
-        distance_notation = lambda name, value : "|"+name+"| = "+str(value)
-        angle_notation = lambda name, value : "m("+name+") = "+str(value)
+        vt = VariableTextor(roundToDigits=self.roundToDigits)
 
         counter = 0
         for varname in variables:
             if varname == "^visible_count" or variables[varname]["visibility"] != True:continue
-            varType = variables[varname]["type"]
-            notation = lambda name, value: str(name)+" = "+str(value)
-            if varType == "distance":notation = distance_notation
-            elif varType == "area": notation = area_notation
-            elif varType == "angle": notation = angle_notation
-
-            value = variables[varname]["value"] if self.roundToDigits == -1 else round(variables[varname]["value"],self.roundToDigits)
-            varstring = notation(variables[varname]["objectname"],value)
+            varstring = vt.textit(variables[varname])
 
             x = self.variableMargin[0]
             y = self.variableMargin[1]+counter*(h_character+self.spacesBetweenVariables)
