@@ -116,3 +116,34 @@ def select_from_(array, condition, *connected_array): # if condition returns tru
     
     if connected_array == []: return new_array
     else : return (new_array,)+result_connected_arrays
+
+
+
+
+def avarage(lst):
+    sum(lst)/len(lst)
+
+def avrdistance(lst,avr):
+    a = 0
+    for i in lst:
+        a+=abs(i-avr)
+    return a/len(lst)
+
+def std_dev(lst,avr):
+    a = 0
+    for i in lst:
+        a+=(i-avr)**2
+    return math.sqrt(a/len(lst))
+
+def fixval(x,avr,stdv,constant): # when stdv, standart deviation, goes infinite, the value goes to avarage
+    # x is generated value.
+    # avr is avarage.
+    # stdv is standart deviation of values
+    # we want x gets close if stdv is big. and so stdv will not increase somemoment
+    return ((stdv**constant)*avr+x)/((stdv**constant)+1)
+    # Im using this for getting a value for when angles more different from each other, the c constant should be more similar to each other.
+
+def fixdistance(x,avr,stdv,constant):
+
+    return (stdv*stdv+abs(avr-x))/(stdv+1)
+    # Im using this for getting a value for when angles more different from each other, the c constant should be more similar to each other.

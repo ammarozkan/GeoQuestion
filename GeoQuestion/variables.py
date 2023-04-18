@@ -1,5 +1,5 @@
 import math
-from .primary_functions import easyatan,order_dots_by_OutAngleRule,select_from_,order_dots_polygonStyle_by_intersecteds_andReceiveOnlyIds
+from .primary_functions import easyatan,order_dots_by_OutAngleRule,select_from_,order_dots_polygonStyle_by_intersecteds_andReceiveOnlyIds,avarage,avrdistance,std_dev,fixval,fixdistance
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
@@ -355,6 +355,15 @@ class Plane:
     def __init__(self):
         self.dots,self.lines,self.angles,self.polygons = [],[],[],[] # dots, lines, angles, polygons
         self.intersect_lines = []
+
+    def control_linedup(self):
+        pass # if all dots in almostly same line
+
+    def control_beuty(self):
+        for polygon in self.polygons:
+            for angle in polygon.angles:
+                if angle > 0.8*math.pi: return False
+        return True
     
     def add_object(self,*new_objects):
         for new_object in new_objects:
@@ -367,6 +376,33 @@ class Plane:
     
     def create_parallel_line(self,name,another_line,c_range = (-10, 10)):
         self.lines.append(Function.random_line_parallelto_(self.lines[self.find_object_by_name_(another_line,Function)],name,c_range))
+
+    def create_beuty_random_line(self,name,c_range=(-10,10),k=None,c=None):
+        if c == None: c = c_range[0] + random()*(c_range[1]-c_range[0])
+
+        if k==None and len(self.lines) == 0:
+            k = math.tan(random()*math.pi)
+            self.lines.append(Function([c,k],name))
+            print(k,c)
+        elif k== None:
+            anglesum = 0
+            for line in self.lines:
+                anglesum += easyatan(line.const[1])
+            anglesum = (anglesum/len(self.lines))%math.pi
+            nlineangle = (random()-0.5)*2*(math.pi/6)+(math.pi-anglesum)
+            k = math.tan(nlineangle)
+            cvals = [line.const[0] for line in self.lines]
+            cavr = sum(cvals)/len(cvals)
+            kvals = [easyatan(line.const[1]) for line in self.lines]+[easyatan(k)]
+            stdv = avrdistance(kvals,sum(kvals)/len(kvals))
+            dist = fixdistance(c,cavr,stdv,constant=stdv)
+
+            rint = int(random()>0.5)
+            c = cavr + dist*rint + dist*(rint-1)
+            self.lines.append(Function([c,k],name))
+        else:
+            self.lines.append(Function([c,k],name))
+
     
     def find_object_by_name_(self, name, object_type):
         if object_type == Function:

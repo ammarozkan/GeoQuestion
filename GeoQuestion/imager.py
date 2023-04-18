@@ -9,7 +9,7 @@ DEF_TEXTCOLOR = (255,255,255)
 DEF_BCKR = (0,0,0)
 
 class GeometricImager:
-    def __init__(self,w=800,h=600,dotSize=5,fontSize=16,lineWidth=5,variableMargin=(0,0),spacesBetweenVariables=2,roundToDigits=-1,modifyToRealistic=False,onesizeAnglePos=True,anglei_distance=None,line_color=DEF_LINECOLOR,dot_color=DEF_DOTCOLOR,text_color=DEF_TEXTCOLOR,background_color=DEF_BCKR,font_name="Hack-Regular.ttf"):
+    def __init__(self,w=800,h=600,dotSize=5,fontSize=16,lineWidth=5,variableMargin=(0,0),rangec=(20,20),spacesBetweenVariables=2,roundToDigits=-1,modifyToRealistic=False,onesizeAnglePos=True,anglei_distance=None,line_color=DEF_LINECOLOR,dot_color=DEF_DOTCOLOR,text_color=DEF_TEXTCOLOR,background_color=DEF_BCKR,font_name="Hack-Regular.ttf"):
         if anglei_distance == None: anglei_distance = sqrt(w**2+h**2)/50
 
         self.w,self.h,self.dotSize,self.fontSize,self.lineWidth = w,h,dotSize,fontSize,lineWidth
@@ -17,6 +17,8 @@ class GeometricImager:
         self.modifyToRealistic,self.onesizeAnglePos,self.anglei_distance = modifyToRealistic,onesizeAnglePos,anglei_distance
         self.line_color,self.dot_color,self.text_color,self.background_color = line_color,dot_color,text_color,background_color
         self.font_name = font_name
+
+        self.xrangec, self.yrangec = rangec[0],rangec[1]
 
     def Draw(self,plane,title="",print_angles=True):
         img = Image.new("RGB",(self.w,self.h),self.background_color)
@@ -36,10 +38,10 @@ class GeometricImager:
 
         xrange = (dotRange.x.max - dotRange.x.min)
         yrange = (dotRange.y.max - dotRange.y.min)
-        dotRange.x.max += xrange/25
-        dotRange.x.min -= xrange/25
-        dotRange.y.max += yrange/25
-        dotRange.y.min -= yrange/25
+        dotRange.x.max += xrange/self.xrangec
+        dotRange.x.min -= xrange/self.xrangec
+        dotRange.y.max += yrange/self.yrangec
+        dotRange.y.min -= yrange/self.yrangec
 
         xi = lambda x: (x - dotRange.x.min)*self.w/(dotRange.x.max - dotRange.x.min)
         yi = lambda y: (y - dotRange.y.min)*self.h/(dotRange.y.max - dotRange.y.min)

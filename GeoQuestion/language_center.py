@@ -23,7 +23,6 @@ class VariableTextor:
         self.roundToDigits=roundToDigits
 
     def textit(self,anvar):
-        print(anvar)
         value = anvar["value"] if self.roundToDigits == -1 else round(anvar["value"],self.roundToDigits)
         notation = lambda name, value: str(name)+" = "+str(value)
         if anvar["type"] == "distance":notation = self.distance_notation
@@ -153,16 +152,17 @@ class GeometricLanguager:
                         else:
                             self.error_log("If a line defining by another segment, you should use that syntax: -> [triangle_name]'s [thing] [that_dot's]")
                     elif len(line) == 2:
-                        k = random.random()*(self.constant2[1]-self.constant2[0]) + self.constant2[0]
-                        c = random.random()*(self.constant1[1]-self.constant1[0]) + self.constant1[0]
+                        k = None
+                        c = None
                         if "parallel" in var_data:
                             k = self.plane.lines[self.plane.find_object_by_name_(var_data["parallel"],Function)].const[1]
                         if "c" in var_data:
                             c = float(var_data["c"])
                         if "k" in var_data:
                             k = float(var_data["k"])
-                        self.plane.add_object(Function([c,k],var_data["name"]))
+                        self.plane.create_beuty_random_line(var_data["name"],self.constant1,k=k,c=c)
                         self.info_log("Line Defined:",var_data["name"])
+
                     else: self.error_log("Wtf is that. You splitted ",len(line)," times your line with that '->' thing.")
                 elif line[0].replace(" ","") == "dot" or line[0].replace(" ","") == "secretdot":
                     secretdot = line[0].replace(" ","") == "secretdot"
