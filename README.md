@@ -298,24 +298,25 @@ imager.modifyToRealistic = True
 ```
 All modifications you can make:
 
-| Modifications               | Changes What?                                          | Values                                                             |
-| --------------------------- |:------------------------------------------------------:|:------------------------------------------------------------------:|
-| w                           | Width of Image                                         | An integer value that can be a width of an image.                  |
-| h                           | Heigth of Image                                        | An integer value that can be a heigth of an image.                 |
-| dotSize                     | Dot's Visual Circle Size                               | Diameter of circle So can be a float value for a diameter.         |
-| fontSize                    | Font Size of Texts in Image                            | Just a font size. So can be an integer that bigger than 0          |
-| lineWidth                   | Thickness of Lines                                     | A float value. I called it lineWidth because it works like width.  |
-| variableMargin              | Changes Margin in Variable Segment Like CSS            | Takes a tuple that contains (xmargin, ymargin). It so cooooooollu  |
-| spacesBetweenVariables      | Spaces Between Variables as Pixels                     | Just an integer. That will change pixel space between variables.   |
-| roundToDigits               | Rounds to the Desired Number of Digits After the Point | Integer. How many digits you want after dot?                       |
-| modifyToRealistic           | Drawing Shapes for According to Realistic Sizes        | True or False. If True, imager will draw realisticly. Else wont.   |
+| Modifications               | Changes What?                                           | Values                                                             |
+| --------------------------- |:-------------------------------------------------------:|:------------------------------------------------------------------:|
+| w                           | Width of Image                                          | An integer value that can be a width of an image.                  |
+| h                           | Heigth of Image                                         | An integer value that can be a heigth of an image.                 |
+| dotSize                     | Dot's Visual Circle Size                                | Diameter of circle So can be a float value for a diameter.         |
+| fontSize                    | Font Size of Texts in Image                             | Just a font size. So can be an integer that bigger than 0          |
+| lineWidth                   | Thickness of Lines                                      | A float value. I called it lineWidth because it works like width.  |
+| variableMargin              | Changes Margin in Variable Segment Like CSS             | Takes a tuple that contains (xmargin, ymargin). It so cooooooollu  |
+| rangec                      | Changes Empty Segment in Image (so its like margin yeah)| Takes a tuple that contains (xrangec, yrangec). Empty segment increases when value -> 0  |
+| spacesBetweenVariables      | Spaces Between Variables as Pixels                      | Just an integer. That will change pixel space between variables.   |
+| roundToDigits               | Rounds to the Desired Number of Digits After the Point  | Integer. How many digits you want after dot?                       |
+| modifyToRealistic           | Drawing Shapes for According to Realistic Sizes         | True or False. If True, imager will draw realisticly. Else wont.   |
 | onesizeAnglePos             | If True, Imager will text the deegre to a coordinate that distance with dot is a constant. Else just text it to between bisector of triangle and the dot.        | True or False.   |
 | anglei_distance             | For onesizeAnglePos = True, You Can Change the Distance Constant        | The distance dude. Float...   |
-| line_color                  | Line's Color                                           | Just tuple like (R,G,B)                                            |
-| dot_color                   | Dot's Color                                            | Just tuple like (R,G,B)                                            |
-| text_color                  | Text's Color                                           | Just tuple like (R,G,B)                                            |
-| background_color            | Background's Color                                     | Just tuple like (R,G,B)                                            |
-| font_name                   | Text's Font                                            | Just string as font's name in system.                              |
+| line_color                  | Line's Color                                            | Just tuple like (R,G,B)                                            |
+| dot_color                   | Dot's Color                                             | Just tuple like (R,G,B)                                            |
+| text_color                  | Text's Color                                            | Just tuple like (R,G,B)                                            |
+| background_color            | Background's Color                                      | Just tuple like (R,G,B)                                            |
+| font_name                   | Text's Font                                             | Just string as font's name in system.                              |
 > (they are more actually, I'll write rest of them later.)
 
 
@@ -333,6 +334,12 @@ imager.lineWidth=25
 img_withbiggerlines = imager.Draw(languageReader.plane)
 ```
 
+
+#### Deep Calculations
+
+For a good image, this program calculates some beuty.
+
+> Ill add explanation here.
 
 
 
