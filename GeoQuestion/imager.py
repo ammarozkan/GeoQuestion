@@ -32,7 +32,7 @@ class GeometricImager:
             ymid = (dotRange.y.max+dotRange.y.min)/2
 
             dotRange.x.max = xmid+rangeShould/2
-            dotRange.x.min = xmin-rangeShould/2
+            dotRange.x.min = xmid-rangeShould/2
             dotRange.y.max = ymid+rangeShould/2
             dotRange.y.min = ymid-rangeShould/2
 
@@ -74,7 +74,6 @@ class GeometricImager:
 
                     slope = abs(polygon.angle_vision[i].y/polygon.angle_vision[i].x)
                     anglestring = "{:.2f}".format(polygon.angles[i]*180/pi)
-                    print(len(anglestring))
                     x -= (self.fontSize*12/16)*len(anglestring)/2
                     y -= (self.fontSize*12/16)/2
                     drawer.text((x,y),anglestring,fill=self.text_color,font=font)

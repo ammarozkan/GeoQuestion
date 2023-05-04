@@ -104,6 +104,9 @@ class Function:
         for c in range(1,len(self.const)):
             r += self.const[c]*(x**c)
         return r
+
+    def __call__(self,x):
+        return self.f(x)
     
     def f_numpy(self,xr):
         r = self.const[0]*np.ones(len(xr))
@@ -143,9 +146,9 @@ class Function:
         return Function.coordsToLine(dot1.coord,dot2.coord,name)
     
     @staticmethod
-    def dotAndSlope(dot : Dot,slope):
+    def dotAndSlope(dot : Dot,slope, name):
         c = dot.coord.y-slope*dot.coord.x
-        return Function([c,slope])
+        return Function([c,slope],name)
     
     @staticmethod
     def intersect(f1,f2):
@@ -194,11 +197,9 @@ class Polygon:
         self.angles,self.name = angles,name
         
         self.polygonStyleOrdered_ids = order_dots_polygonStyle_by_intersecteds_andReceiveOnlyIds(self.dots,lines_of_intersecteds)
-        #print([id for id in self.polygonStyleOrdered_ids])
 
         angle_vision = [Coordinate((0,0)) for c in range(0,len(self.dots))]
         for x in range(0,len(self.dots)):
-            print(self.polygonStyleOrdered_ids)
             dot_id = self.polygonStyleOrdered_ids.index(x)
             dot_id = np.array([dot_id-1,dot_id,dot_id+1])%len(self.dots)
             b1 = self.bisector(dot_id[0],dot_id[1],dot_id[2])
@@ -383,7 +384,6 @@ class Plane:
         if k==None and len(self.lines) == 0:
             k = math.tan(random()*math.pi)
             self.lines.append(Function([c,k],name))
-            print(k,c)
         elif k== None:
             anglesum = 0
             for line in self.lines:
@@ -433,7 +433,6 @@ class Plane:
             if dot_id == None: 
                 print("Dot named '",dotname,"' not found.") ; return
             intersection = self.intersect_lines[dot_id]
-            #print(intersection)
             if intersection == None:
                 print("Intersected lines required.") ; return
             intersected_lines.append((self.lines[intersection[0]],self.lines[intersection[1]]))
@@ -462,7 +461,6 @@ class Plane:
         fig,ax = plt.subplots()
         for line in self.lines : 
             ax.plot(xr,line.f_numpy(xr))
-            #print(line.name)
         
         for dot in self.dots : 
             ax.annotate(dot.name,dot.coord.getArrayLike())

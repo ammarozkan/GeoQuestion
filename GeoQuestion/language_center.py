@@ -50,7 +50,7 @@ class Finder:
 
 
 class GeometricLanguager:
-    def __init__(self, project_name, error_log_printing = True, info_log_printing = True,megainfo_log_printing = True):
+    def __init__(self, project_name, error_log_printing = True, info_log_printing = True,megainfo_log_printing = True,output_log_printing=True):
         self.project_name = project_name
         self.plane = Plane()
         self.constant1 = (-10,10)
@@ -63,6 +63,7 @@ class GeometricLanguager:
         self.error_log_printing = error_log_printing
         self.info_log_printing = info_log_printing
         self.megainfo_log_printing = megainfo_log_printing
+        self.output_log_printing = True
     
     def to_dict(self,string : str):
         variables = string.split(",")
@@ -95,6 +96,9 @@ class GeometricLanguager:
     def info_log(self,*l):
         if self.info_log_printing: print("Info:",*l)
 
+    def output_log(self, *l):
+        if self.output_log_printing: print(*l)
+
     def megainfo_log(self,*l):
         if self.megainfo_log_printing: print("MegaInfo:",*l)
 
@@ -105,17 +109,15 @@ class GeometricLanguager:
                 linesarray = fp.readlines()
                 self.info_log("Reading File:",file_path)
         elif linesarray == None:
-            print("Hey, hey, hey. Somethings wrong... You cant just pass a empty parameter here!")
+            self.error_log("Hey, hey, hey. Somethings wrong... You cant just pass a empty parameter here!")
         
         for line in linesarray:
             self.megainfo_log("Reading Steilen:",line)
             if line[0:4] != "next" and line[0:3] != "end":
                 line = line.replace("\n","").split("->")
                 var_data = self.to_dict(line[1].replace(" ",""))
-                #print(line)
-                #print(var_data)
                 if "name" in var_data and var_data["name"] == "^visible_count":
-                    print("You need to define a name to your thing that is not '^visible_count'")
+                    self.error_log("You need to define a name to your thing that is not '^visible_count'")
                 if line[0].replace(" ","") == "line":
                     if "name" not in var_data:
                         self.error_log("If you defining a line, you should define with a name in it!")
@@ -224,7 +226,6 @@ class GeometricLanguager:
                                     if d2dotid == -1: self.error_log("There is not ",lyritic["priv_segment"]," named dot.")
                                     anglevalue = self.plane.polygons[self.finder.founded_id].angles[d2dotid]*180/pi
                                     allangles = [object.dots[object.polygonStyleOrdered_ids[(i+object.polygonStyleOrdered_ids.index(d2dotid)-1)%len(object.dots)]].name for i in range(0,3)]
-                                    print([object.dots[object.polygonStyleOrdered_ids[i]].name for i in range(0,len(object.dots))])
                                     specifies_dict = {"type":"angle","objectname":allangles[0]+allangles[1]+allangles[2]}
                                     self.variables[var_data["name"]] = Variable(var_data["name"],anglevalue,specifies_dict,visibility)
                                     d2dotid = object.getdotid(lyritic["priv_segment"])
@@ -259,10 +260,10 @@ class GeometricLanguager:
                             self.info_log("Clear--\n\n")
                             self.plane.clear()
                         elif line[2] == "log":
-                            print("LOG:\n",self.plane)
-                            print("Variables:")
+                            self.output_log("LOG:\n",self.plane)
+                            self.output_log("Variables:")
                             for var in self.variables:
-                                print(var,":",self.variables[var])
+                                self.output_log(var,":",self.variables[var])
                         else: self.error_log("What is ",line[2],"? What should I do? I don't know wth is that!")
                     else: self.error_log("Hmmm... Let's talk about '",line[1],"' that you write at next segment...")
 

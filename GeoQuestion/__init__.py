@@ -6,6 +6,7 @@ import random as rnd
 from .variables import Coordinate, Triangle,order_dots_by_OutAngleRule,Dot,Polygon,Function,Plane
 from .language_center import GeometricLanguager
 from .imager import GeometricImager,VariableTextor
+from .supportfunctions import NE6
 
 def TestLibrary():
     our_plane = Plane()
