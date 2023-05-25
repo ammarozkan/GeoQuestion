@@ -337,9 +337,53 @@ img_withbiggerlines = imager.Draw(languageReader.plane)
 
 #### Deep Calculations
 
-For a good image, this program calculates some beuty.
+Damn dude. I had an trash like photo from this code. I cant even see the geometric shape!
 
-> Ill add explanation here.
+And now, this sentence is almost impossible. Because, I did a system that calculates "beuty" of an generation.
+For using "beuty calculator" you can directly use one of the calculator functions. In example this library
+have a *"NE1_fixed"* function.
+
+
+```python
+import GeoQuestion
+
+languageReader = GeoQuestion.GeometricLanguager("Basic_Application",False,False,False)
+languageReader.read_file("thefile.gml")
+
+while False in [NE1_fixed(polygon.dots) for polygon in GL.plane.polygons] or NE1_fixed(GL.plane.dots) == False:
+            languageReader = GeometricLanguager("Basic_Application",False,False,False)
+            languageReader.read_file("thefile.gml")
+            print("I dont liked it.")
+
+imager = GeoQuestion.GeometricImager(fontSize=25,lineWidth=10)
+img = imager.Draw(languageReader.plane)
+img.show()
+```
+
+In this example:
+- a languageReader variable defined for reading from file to create shapes.
+- a while loop that continues if a bad polygon in shape creation.
+- as while loop continues, new shapes generated. again and again.
+- If every polygon is detected beutiful by the *"NE1_fixed"* function, loop stops.
+- And program draws image.
+
+So, you can see in this code we have that *NE1_fixed* for controlling the shape is good or bad.
+Mostly, beuty controlling functions, or algorithms, gets a list of dots and returns this list of dots
+is beautiful or trashful. You can write an beuty controlling function too. But if you want to use
+functions that already defined, you can use that functions:
+- **NE1_fixed**: This function gets dots, calculates 2 lines that look like the list of dots. I think this is called 
+linear regression in statistics. But why 2 lines? 1 for x to the y axis and 1 for y to the x axis function. And
+from this 2 lines this functon calculates "how good is this lines for a geometric shape".
+- **NE6**: This function gets dots too. But, for working with this function you will need a data. More data.
+Why? Because this function gets the input dots, generates some values from these dots (like linear regression 
+as mentioned in previous example or standart deviation of coordinates) and looks to the data. Looks to the database
+for "which one data is closest to thıs new data" and then finds the closest one. And, if this closest one is a
+good shape, this is a good shape, else this is not a good shape.
+
+
+When I create new algorithms or new functions, I'll add them here. And **NE1_fixed** is my personally
+favorite. Because,  *NE1_fixed* is fast, simple and more correct. But *NE6* is more correct if
+enough data is given to it. But if this is didden to it, *NE6* will be working so slow.
 
 
 
