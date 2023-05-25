@@ -55,14 +55,17 @@ def extractfromdots(Dots):
 
 def formula_NE6(dotcount,beuty,beutyrev,beutydist,beutyx,beutyy,beutydisturbition,beutywh,centeredmo,gooddatas=[]):
 	newdata = [dotcount,beuty,beutyrev,beutydist,beutyx,beutyy,beutydisturbition,beutywh,centeredmo]
+
+	# these first and second file should be in GeoQuestion library folder
+	# first file : the json file for getting info about value ranges
 	g = open(os.path.dirname(__file__)+"/gooddatasranges5.json")
 	MMR = json.load(g)["rangearray"]
 
-
+	# second file : good datas that prooved themself as being goood....
 	filename = os.path.dirname(__file__)+"/gooddatasv2.json"
-
 	f = open(filename)
 	data = json.load(f)
+
 	gooddatas += data["allgooddatas"]
 
 	res,dist = closestone(newdata,gooddatas,MMR)
