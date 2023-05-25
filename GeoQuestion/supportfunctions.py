@@ -53,7 +53,7 @@ def extractfromdots(Dots):
 	centeredmo = math.sqrt((AVDOT.coord.x-(maxminR.x.max+maxminR.x.min)/2)**2 + (AVDOT.coord.y-(maxminR.y.max+maxminR.y.min)/2)**2) / math.sqrt((maxminR.x.max-maxminR.x.min)**2 + (maxminR.y.max-maxminR.y.min)**2)
 	return [len(Dots),beuty,beutyrev,beutydist,beutyx,beutyy,beutydisturbition,beutywh,centeredmo]
 
-def formula_NE6(dotcount,beuty,beutyrev,beutydist,beutyx,beutyy,beutydisturbition,beutywh,centeredmo):
+def formula_NE6(dotcount,beuty,beutyrev,beutydist,beutyx,beutyy,beutydisturbition,beutywh,centeredmo,gooddatas=[]):
 	newdata = [dotcount,beuty,beutyrev,beutydist,beutyx,beutyy,beutydisturbition,beutywh,centeredmo]
 	g = open(os.path.dirname(__file__)+"/gooddatasranges5.json")
 	MMR = json.load(g)["rangearray"]
@@ -63,11 +63,38 @@ def formula_NE6(dotcount,beuty,beutyrev,beutydist,beutyx,beutyy,beutydisturbitio
 
 	f = open(filename)
 	data = json.load(f)
-	allgooddatas = data["allgooddatas"]
+	gooddatas += data["allgooddatas"]
 
-	res,dist = closestone(newdata,allgooddatas,MMR)
+	res,dist = closestone(newdata,gooddatas,MMR)
 	return (True in res and False not in res),dist
 
+def getdataforNE1(Dots):
+	calcus = []
+	slopes = []
+	slopesrev = []
+	distances = []
+	for dot1 in Dots:
+		for dot2 in Dots:
+			if dot1.coord.x != dot2.coord.x and dot1.coord.y != dot2.coord.y and ((dot1.name,dot2.name) not in calcus or (dot2.name,dot1.name) not in calcus): 
+				slopes.append(math.atan((dot2.coord.y-dot1.coord.y)/(dot2.coord.x-dot1.coord.x)))
+				slopesrev.append(math.atan((dot2.coord.x-dot1.coord.x)/(dot2.coord.y-dot1.coord.y)))
+				distances.append(Dot.distance_of_points(dot1,dot2))
+			calcus.append((dot1.name,dot2.name))
 
-def NE6(Dots):
-	return formula_NE6(*extractfromdots(Dots))
+	maxminR = Plane.minimumRange(Dots)
+
+	beuty = std_dev(slopes,sum(slopes)/len(slopes))
+	beutyrev = std_dev(slopesrev,sum(slopesrev)/len(slopesrev))
+	beutydist = std_dev(distances,sum(distances)/len(distances)) / math.sqrt((maxminR.x.max-maxminR.x.min)**2 + (maxminR.y.max-maxminR.y.min)**2)
+
+	return beuty,beutyrev,beutydist
+
+def formula_NE1_fixed(dotcount,beuty,beutyrev,beutydist,beutyx,beutyy,beutydisturbition,beutywh,centeredmo,gooddatas=[]):
+	return (beuty+beutyrev) > 1.50 and beutydist < 0.20 #NE1-FIXED
+
+def NE1_fixed(Dots):
+	beuty,beutyrev,beutydist = getdataforNE1(Dots)
+	return (beuty+beutyrev) > 1.50 and beutydist < 0.20 #NE1-FIXED
+
+def NE6(Dots,gooddatas=[]):
+	return formula_NE6(gooddatas,*extractfromdots(Dots))

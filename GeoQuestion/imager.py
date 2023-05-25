@@ -2,6 +2,8 @@ from PIL import Image, ImageDraw, ImageFont
 from .variables import Plane
 from math import sqrt,pi
 from .language_center import VariableTextor
+import random
+
 
 DEF_LINECOLOR = (255,0,0)
 DEF_DOTCOLOR = DEF_LINECOLOR
@@ -20,7 +22,9 @@ class GeometricImager:
 
         self.xrangec, self.yrangec = rangec[0],rangec[1]
 
-    def Draw(self,plane,title="",print_angles=True):
+        self.colors = [(238, 164, 127),(251, 234, 235),(204, 243, 129)]
+
+    def Draw(self,plane,title="",print_angles=True,debugmode=False):
         img = Image.new("RGB",(self.w,self.h),self.background_color)
         drawer = ImageDraw.Draw(img)
         font = ImageFont.truetype(self.font_name,self.fontSize)
@@ -46,9 +50,20 @@ class GeometricImager:
         xi = lambda x: (x - dotRange.x.min)*self.w/(dotRange.x.max - dotRange.x.min)
         yi = lambda y: (y - dotRange.y.min)*self.h/(dotRange.y.max - dotRange.y.min)
 
-        for line in plane.lines:
-            ymin, ymax = line.f(dotRange.x.min), line.f(dotRange.x.max)
-            drawer.line([(0,yi(ymin)),(self.w,yi(ymax))], fill=self.line_color, width = self.lineWidth)
+        if not debugmode:
+            for polygon in plane.polygons:
+                coordinates = [(xi(polygon.dots[dId].coord.x),yi(polygon.dots[dId].coord.y)) for dId in polygon.polygonStyleOrdered_ids]
+                drawer.polygon(coordinates,fill = (self.colors.pop(random.randint(0,len(self.colors)-1))))
+                for i in range(0,len(coordinates)):
+                    c1 = coordinates[i]
+                    c2 = coordinates[(i+1)%len(coordinates)]
+                    drawer.line([c1,c2],fill=(0,0,0),width=self.lineWidth)
+
+
+        else:
+            for line in plane.lines:
+                ymin, ymax = line.f(dotRange.x.min), line.f(dotRange.x.max)
+                drawer.line([(0,yi(ymin)),(self.w,yi(ymax))], fill=self.line_color, width = self.lineWidth)
 
         for dot in plane.dots:
             if dot.visibility == False:continue
@@ -58,7 +73,7 @@ class GeometricImager:
             drawer.ellipse([start,stop],fill=self.dot_color)
             drawer.text((x,y-2),dot.name,fill=self.text_color,font=font)
 
-        if print_angles == True:
+        if print_angles == True and debugmode == True:
             for polygon in plane.polygons:
                 for i in range(0,len(polygon.dots)):
                     x,y = None,None

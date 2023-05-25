@@ -36,11 +36,11 @@
 
 - [x] Convert draw functions to class to handle that visual variables, parameters easily.
 
-- [ ] Beautiful setting for beutiful shapes.
+- [x] Beautiful setting for beutiful shapes.
+
+- [x] Görüntü için alan tarama.
 
 - [ ] Noktalarin ismini hic cizgi olmayan bir yere yazma. Bu renk kontrolu ile saglanabilir.
-
-- [ ] Görüntü için alan tarama.
 
 - [ ] Aynı yeri belirten açıları 2 kez yazmamak.
 
